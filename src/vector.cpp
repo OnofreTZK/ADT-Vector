@@ -39,5 +39,31 @@ int main(int argc, char *argv[])
     V3.push_back(4);
     std::cout << "\n>>V3 after push_back size = " << V3.size();
     std::cout << "\n";
+
+    sc::vector<int> V4(V3);
+
+    std::cout << "[ ";
+    for( int i = 0; i < V4.size(); i++ )
+    {
+        std::cout << V4[i] << " ";
+    }
+    std::cout << "]\n";
+
+
+    sc::vector<int> V5 = V4;
+
+    std::cout << "[ ";
+    for( int i = 0; i < V5.size(); i++ )
+    {
+        std::cout << V5[i] << " ";
+    }
+    std::cout << "]\n";
+
+    sc::vector<int> V6( testArray, testArray + 10 );
+
+    assert( V6.front() == 1 ); // TEST front method
+    assert( V6.back() == 10 ); // TEST back method
+
+
     return 0;
 }

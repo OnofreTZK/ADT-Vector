@@ -16,7 +16,7 @@ namespace sc {
 
         private:
             T *m_data; // array
-            size_t m_capacity; // logical capacity
+            size_t m_capacity; // size
             size_t m_end; // logical index
 
         public:
@@ -54,10 +54,76 @@ namespace sc {
                 }
             }
 
+            // other vector parameter constructor
             vector( const vector & other )
             {
-                
+                m_data = new T[other.size()];
+
+                m_end =0;
+
+                m_capacity = other.size();
+
+                for( int i = 0; i < other.size(); i++ )
+                {
+                    m_data[i] = other[i];
+                    m_end++;
+                }
             }
+
+            // initializer list parameter constructo
+            vector( std::initializer_list<T> ilist )
+            {
+                m_data = new T[ilist.size()];
+
+                m_capacity = ilist.size();
+
+                m_end =0;
+
+                for( int i = 0; i < ilist.size(); i++ )
+                {
+                    m_data[i] = ilist[i];
+                    m_end++;
+                }
+            }
+
+            // default destructor
+            ~vector()
+            {
+                delete[] m_data;
+            }
+
+            // assign operator constructors
+            vector& operator=( const vector& other )
+            {
+                m_data = new T[other.size()];
+
+                m_end =0;
+
+                m_capacity = other.size();
+
+                for( int i = 0; i < other.size(); i++ )
+                {
+                    m_data[i] = other[i];
+                    m_end++;
+                }
+            }
+
+            vector& operator=( std::initializer_list<T> ilist )
+            {
+                m_data = new T[ilist.size()];
+
+                m_capacity = ilist.size();
+
+                m_end =0;
+
+                for( int i = 0; i < ilist.size(); i++ )
+                {
+                    m_data[i] = ilist[i];
+                    m_end++;
+                }
+            }
+
+            // end of constructors and destructors
 
             // clear elements in array( change logical index ).
             void clear()
@@ -75,15 +141,16 @@ namespace sc {
             {
                 return m_end == m_capacity;
             }
-            //===============================
 
-            // default destructor
-            ~vector()
-            {
-                delete[] m_data;
-            }
+            // access front element
+            T& front() { return m_data[0]; }
+            const T& front() const { return m_data[0]; }
 
-            size_t size() { return m_capacity; }
+            // access back element
+            T& back() { return m_data[m_capacity - 1]; }
+            const T& back() const { return m_data[m_capacity - 1]; }
+
+            const size_t size() const { return m_capacity; }
             //===================================================================
 
 

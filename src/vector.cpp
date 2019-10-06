@@ -65,5 +65,117 @@ int main(int argc, char *argv[])
     assert( V6.back() == 10 ); // TEST back method
 
 
+    std::cout << "\nV6\n[ ";
+    for( int i = 0; i < V6.size(); i++ )
+    {
+        std::cout << V6[i] << " ";
+    }
+    std::cout << "]\n";
+    std::cout << "V6 size = " << V6.size() << "\n";
+    std::cout << "V6 capacity = " << V6.capacity() << "\n";
+    V6.push_back(11);
+    std::cout << "\n";
+
+    std::cout << "[ ";
+    for( int i = 0; i < V6.size(); i++ )
+    {
+        std::cout << V6[i] << " ";
+    }
+    std::cout << "]\n";
+
+    std::cout << "V6 size after push back = " << V6.size() << "\n";
+    std::cout << "V6 capacity after push back = " << V6.capacity() << "\n";
+
+    V6.clear();
+
+    assert( V6.size() == 0 ); // TEST size after clear.
+    assert( V6.capacity() == 20 ); // TEST capacity after clear.
+
+    std::cout << "[ ";
+    for( int i = 0; i < V6.size(); i++ )
+    {
+        std::cout << V6[i] << " ";
+    }
+    std::cout << "]\n";
+
+
+
+    sc::vector<int> V7 = V5;
+
+    std::cout << "\nV7\n[ ";
+    for( int i = 0; i < V7.size(); i++ )
+    {
+        std::cout << V7[i] << " ";
+    }
+    std::cout << "]\n";
+    std::cout << "V7 size = " << V7.size() << "\n";
+    std::cout << "V7 capacity = " << V7.capacity() << "\n";
+    V7.push_front(50);
+    std::cout << "\n";
+
+    std::cout << "[ ";
+    for( int i = 0; i < V7.size(); i++ )
+    {
+        std::cout << V7[i] << " ";
+    }
+    std::cout << "]\n";
+
+    std::cout << "V7 size after push front = " << V7.size() << "\n";
+    std::cout << "V7 capacity after push front = " << V7.capacity() << "\n";
+
+    for( int i = 0; i < V7.size(); i++ )
+    {
+        std::cout << V7[i] << " ";
+    }
+    std::cout << "]\n";
+    std::cout << "V7 size = " << V7.size() << "\n";
+    std::cout << "V7 capacity = " << V7.capacity() << "\n";
+
+    V7.pop_back();
+    std::cout << "\n";
+
+    std::cout << "[ ";
+    for( int i = 0; i < V7.size(); i++ )
+    {
+        std::cout << V7[i] << " ";
+    }
+    std::cout << "]\n";
+
+    std::cout << "V7 size after pop back = " << V7.size() << "\n";
+    std::cout << "V7 capacity after pop back = " << V7.capacity() << "\n";
+
+    V7.pop_front();
+    std::cout << "\n";
+
+    std::cout << "[ ";
+    for( int i = 0; i < V7.size(); i++ )
+    {
+        std::cout << V7[i] << " ";
+    }
+    std::cout << "]\n";
+
+    std::cout << "V7 size after pop front = " << V7.size() << "\n";
+    std::cout << "V7 capacity after pop front = " << V7.capacity() << "\n";
+
+    assert( V7.front() == 1 ); // TEST front
+    assert( V7.back() == 10 ); // TEST back
+
+    sc::vector<int> V8(10);
+
+    std::cout << "[ ";
+    for( int i = 0; i < V8.size(); i++ )
+    {
+        std::cout << V8[i] << " ";
+    }
+    std::cout << "]\n";
+
+    V8.assign(10, 5);
+
+    std::cout << "[ ";
+    for( int i = 0; i < V8.size(); i++ )
+    {
+        std::cout << V8[i] << " ";
+    }
+    std::cout << "]\n";
     return 0;
 }

@@ -125,13 +125,35 @@ namespace sc {
 
             // end of constructors and destructors
 
-            // clear elements in array( change logical index ).
+            // FILL/ASSIGN
+            void assign( size_t count, const T & element )
+            {
+                if( count > m_capacity )
+                {
+                    throw std::out_of_range("Number of copies out of range!\n");
+                }
+
+                for( int i = 0; i < count; i++ )
+                {
+                    m_data[i] = element;
+                    m_end++;
+                }
+            }
+
+            // clear elements in array.
             void clear()
             {
                 m_end = 0;
+
+                T * temp = new T[m_capacity];
+
+                delete[] m_data;
+
+                m_data = temp;
+
             }
 
-            // Check the free space in array.
+            // Check space in array.
             bool empty() const
             {
                 return m_end == 0;
@@ -147,10 +169,14 @@ namespace sc {
             const T& front() const { return m_data[0]; }
 
             // access back element
-            T& back() { return m_data[m_capacity - 1]; }
-            const T& back() const { return m_data[m_capacity - 1]; }
+            T& back() { return m_data[m_end - 1]; }
+            const T& back() const { return m_data[m_end - 1]; }
 
-            const size_t size() const { return m_capacity; }
+            // Return logical size
+            const size_t size() const { return m_end; }
+
+            // Return maximum capacity.
+            const size_t capacity() const { return m_capacity; }
             //===================================================================
 
 
@@ -198,6 +224,15 @@ namespace sc {
                         return temp_clone;
                     }
 
+                    T& operator--( void ) { ptr--; return *this; }
+
+                    T& operator--( int )
+                    {
+                        iterator temp_clone( *this );
+                        ptr--;
+                        return temp_clone;
+                    }
+
                     bool operator==( const iterator & rhs )
                     { return this->ptr == rhs.ptr; }
 
@@ -209,6 +244,19 @@ namespace sc {
 
 
 
+            };
+
+
+            // CLASS CONST ITERATOR ===========================================
+
+            class const_iterator
+            {
+                private:
+                    const T *ptr;
+
+                public:
+
+            
             };
             //=================================================================
 
@@ -284,6 +332,43 @@ namespace sc {
 
                 this->m_data[ m_end++ ] = element;
             }
+
+            // Insert element in first position and increase logical index.
+            void push_front( const T & element )
+            {
+                if( full() )
+                {
+                    reserve( 2 * m_capacity );
+                }
+
+                for( int i = m_end; i > 0; i-- )
+                {
+                    m_data[i] = m_data[i-1];
+                }
+
+                this->m_data[ 0 ] = element;
+
+                m_end++;
+            }
+
+            // Remove element in last position.
+            void pop_back( void )
+            {
+                this->m_data[ m_end-- ] = T();
+            }
+
+            // Remove element in first position.
+            void pop_front( void )
+            {
+                for( int i = 0; i < m_end - 1; i++ )
+                {
+                    m_data[i] = m_data[i+1];
+                }
+
+                m_end--;
+            }
+
+
     };
 }
 

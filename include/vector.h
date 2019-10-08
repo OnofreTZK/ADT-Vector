@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <initializer_list>
 #include <iterator>
+#include <algorithm>
 
 namespace sc {
 
@@ -33,7 +34,7 @@ namespace sc {
 
             }
 
-            // range content constructor
+            // range content constructor.
             template< typename InputIt >
 
             vector( InputIt first, InputIt last )
@@ -106,6 +107,7 @@ namespace sc {
                     m_data[i] = other[i];
                     m_end++;
                 }
+
             }
 
             vector& operator=( std::initializer_list<T> ilist )
@@ -118,9 +120,10 @@ namespace sc {
 
                 for( int i = 0; i < ilist.size(); i++ )
                 {
-                    m_data[i] = ilist[i];
+                    m_data[i] = *(ilist.begin() + i);
                     m_end++;
                 }
+
             }
 
             // end of constructors and destructors
@@ -189,6 +192,11 @@ namespace sc {
 
                 public:
 
+                    typedef T& reference;
+                    typedef T* pointer;
+                    typedef T value_type;
+                    typedef std::bidirectional_iterator_tag iterator_category;
+                    typedef std::ptrdiff_t difference_type;
                     // Basic pointer arithmetic is hardly used here.
                     // default iterator constructor
                     iterator( T * pt=nullptr ) : ptr{ pt } {}
@@ -209,43 +217,43 @@ namespace sc {
                     T& operator->( void ){ return *ptr; };
 
                     // sum operator +
-                    T& operator+( size_t offset ) const{ return iterator( ptr + offset ); }
+                    iterator operator+( size_t offset ) const{ return iterator( ptr + offset ); }
                     // normal pointer increment is accepted.
                     // return a new iterator using contructor pointer + integer value.
 
                     // INCREMENTS ( ++it and it++ )
                     // ++it
-                    T& operator++( void ) { ptr++; return *this; }
+                    iterator operator++( void ) { ptr++; return *this; }
 
                     // it++
-                    T& operator++( int )
+                    iterator operator++( int )
                     {
-                        iterator temp_clone( *this );
+                        //iterator temp_clone( *this );
                         ptr++;
-                        return temp_clone;
+                        return ptr - 1;
                     }
 
                     std::ptrdiff_t operator-( const iterator & rhs ) const{ return ptr - rhs.ptr; }
 
-                    T& operator-( size_t offset ) const{ return iterator( ptr - offset ); }
+                    iterator operator-( size_t offset ) const{ return iterator( ptr - offset ); }
                     // normal pointer decrement is accepted.
                     // return a new iterator using contructor pointer - integer value.
 
                     // --it
-                    T& operator--( void ) { ptr--; return *this; }
+                    iterator operator--( void ) { ptr--; return *this; }
 
                     // it--
-                    T& operator--( int )
+                    iterator operator--( int )
                     {
-                        iterator temp_clone( *this );
+                        //iterator temp_clone( *this );
                         ptr--;
-                        return temp_clone;
+                        return ptr + 1;
                     }
 
-                    bool operator==( const iterator & rhs )
+                    const bool operator==( const iterator & rhs )
                     { return this->ptr == rhs.ptr; }
 
-                    bool operator!=( const iterator & rhs )
+                    const bool operator!=( const iterator & rhs )
                     { return this->ptr != rhs.ptr; }
 
 
@@ -265,6 +273,8 @@ namespace sc {
 
                 public:
 
+                    typedef std::bidirectional_iterator_tag iterator_category;
+                    typedef std::ptrdiff_t difference_type;
                     // Basic pointer arithmetic is hardly used here.
                     // default const iterator constructor
                     const_iterator( const T * pt=nullptr ) : ptr{ pt } {}
@@ -281,46 +291,169 @@ namespace sc {
                     const T& operator->( void ) const{ return *ptr; };
 
                     // sum operator +
-                    T& operator+( size_t offset ) const{ return const_iterator( ptr + offset ); }
+                    const_iterator operator+( size_t offset ) const{ return const_iterator( ptr + offset ); }
                     // normal pointer increment is accepted.
                     // return a new iterator using contructor pointer + integer value.
 
                     // INCREMENTS ( ++it and it++ )
                     // ++it
-                    T& operator++( void ){ ptr++; return *this; }
+                    const_iterator operator++( void ){ ptr++; return *this; }
 
                     // it++
-                    T& operator++( int )
+                    const_iterator operator++( int )
                     {
                         const_iterator temp_clone( *this );
                         ptr++;
                         return temp_clone;
                     }
 
-                    T& operator-( size_t offset )const{ return const_iterator( ptr - offset ); }
+                    const_iterator operator-( size_t offset )const{ return const_iterator( ptr - offset ); }
                     // normal pointer decrement is accepted.
                     // return a new iterator using contructor pointer - integer value.
 
                     // --it
-                    T& operator--( void ){ ptr--; return *this; }
+                    const_iterator operator--( void ){ ptr--; return *this; }
 
                     // it--
-                    T& operator--( int )
+                    const_iterator operator--( int )
                     {
                         const_iterator temp_clone( *this );
                         ptr--;
-                        return temp_clone;
+                        return ptr - 1;
                     }
 
             };
 
+            // begin iterator
             iterator begin( void ){ return iterator( &m_data[0] ); }
             const_iterator cbegin( void )const{ return const_iterator( &m_data[0] ); }
 
+            // end iterator
             iterator end( void ){ return iterator( &m_data[m_end] ); }
             const_iterator cend( void ){ return const_iterator( &m_data[m_end] ); }
+
+            //=================================================================
+            //OPERATIONS THAT REQUIRE ITERATORS
             //=================================================================
 
+            iterator insert( iterator pos, const T & value )
+            {
+                //iterator first = &m_data[0];
+                iterator last = &m_data[m_end];
+
+                m_end++;
+
+                if( full() )
+                {
+                    reserve( 2 * m_capacity );
+                }
+
+                while( last != pos - 1 )
+                {
+                    *last = *(last-1);
+                    last--;
+                }
+
+                pos--;
+
+                *pos = value;
+
+                return pos;
+
+            }
+
+            template< typename InItr >
+            iterator insert( iterator pos, InItr first, InItr last )
+            {
+                if( size_t(last - first) > size_t( pos - begin() ) )
+                {
+                    throw std::out_of_range( "Given range is bigger than [first, pos) range!\n"); 
+                }
+
+                iterator posfirst = &m_data[0];
+
+                while( posfirst != pos  )
+                {
+                    *posfirst++ = *first++;
+                }
+
+                return pos - 1;
+            }
+
+            iterator insert( iterator pos, std::initializer_list<T> ilist )
+            {
+                if( ilist.size() > size_t( pos - begin() ) )
+                {
+                    throw std::out_of_range( "List size is out of range!\n");
+                }
+
+                for( int i = 0; i < size_t( pos - begin() ); i++ )
+                {
+                    *( begin() + i ) = *( ilist.begin() + i );
+                }
+
+                return pos - 1;
+            }
+
+            iterator erase( iterator pos )
+            {
+                if( size_t( pos - begin() ) >= m_capacity )
+                {
+                    throw std::out_of_range( "Positio is out of range!\n");
+                }
+
+                for( int i = int( pos - begin() ); i < m_end - 1; i++ )
+                {
+                    m_data[i] = m_data[i+1];
+                }
+
+                m_end--;
+
+                return pos;
+            }
+
+            iterator erase( iterator first, iterator last )
+            {
+                while( first != last )
+                {
+                    *first = T();
+                    first++;
+                }
+
+                m_end = 0;
+
+                return last;
+            }
+
+            void assign( iterator first, iterator last )
+            {
+                if( size_t( last - first ) > size_t( end() - begin() ) )
+                {
+                    throw std::out_of_range("Given range is out of range!\n");
+                }
+
+                size_t count = 0;
+
+                while( first != last )
+                {
+                    m_data[count++] = *first;
+                    first++;
+                }
+            }
+
+            void assign( std::initializer_list<T> ilist )
+            {
+                if( size_t( ilist.end() - ilist.begin() ) > size_t( end() - begin() ) )
+                {
+                    throw std::out_of_range("List size is out of range!\n");
+                }
+
+
+                for( int i = 0; i < m_end; i++ )
+                {
+                    *( begin() + i ) = *( ilist.begin() + i );
+                }
+            }
 
 
             // INDEX OPERATOR [] ==============================================

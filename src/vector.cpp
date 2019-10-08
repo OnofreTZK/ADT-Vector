@@ -177,5 +177,26 @@ int main(int argc, char *argv[])
         std::cout << V8[i] << " ";
     }
     std::cout << "]\n";
+
+    V7.shrink_to_fit();
+
+    assert( V7.size() == V7.capacity() ); // TEST shrinking
+
+    std::cout << "\n>>>V7 size after shrink = " << V7.size() << "\n";
+    std::cout << "\n>>>V7 capacity after shrink = " << V7.capacity() << "\n";
+
+    // COMPARE OPERATORS
+
+    assert( V5 == V4 ); // TEST overloading for sc::vector
+    assert( V8 != V5 ); // TEST overloading
+
+    sc::vector<int> V9{ 1, 2, 3, 4, 5 };
+
+    std::cout << "[ ";
+    for( int i = 0; i < V9.size(); i++ )
+    {
+        std::cout << V9[i] << " ";
+    }
+    std::cout << "]\n";
     return 0;
 }

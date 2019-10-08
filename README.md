@@ -22,5 +22,5 @@ $ ./vector_drive
 ## Limitations
 `iterator insert( iterator pos, const T & value)`: In some cases the method can't insert element correctly. 
 
-### Authorship
+## Authorship
 Tiago Onofre Araujo

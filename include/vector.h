@@ -1,6 +1,8 @@
 #ifndef VCTR_H
 #define VCTR_H
 
+// Author: Tiago Onofre Araujo
+
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>

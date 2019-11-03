@@ -14,11 +14,16 @@ In `build`
 $ make 
 
 ```
-To run driver test:
+To run my driver tests(incomplete):
 ```bash
-$ ./vector_drive
-
+$ ./vector_driver
 ```
+
+To run google tests - developed by Professor Selan Rodrigues
+```bash
+$ ./run_tests
+```
+
 ## Limitations
 `iterator insert( iterator pos, const T & value)`: In some cases the method can't insert element correctly. 
 

@@ -1,8 +1,6 @@
 #ifndef VCTR_H
 #define VCTR_H
 
-// Author: Tiago Onofre Araujo
-
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
@@ -110,6 +108,9 @@ namespace sc {
                     m_end++;
                 }
 
+                // SELAN: adicionei a linha abaixo
+                return *this;
+
             }
 
             vector& operator=( std::initializer_list<T> ilist )
@@ -125,6 +126,9 @@ namespace sc {
                     m_data[i] = *(ilist.begin() + i);
                     m_end++;
                 }
+
+                // SELAN: faltou
+                return *this;
 
             }
 
@@ -178,10 +182,10 @@ namespace sc {
             const T& back() const { return m_data[m_end - 1]; }
 
             // Return logical size
-            const size_t size() const { return m_end; }
+            size_t size() const { return m_end; }
 
             // Return maximum capacity.
-            const size_t capacity() const { return m_capacity; }
+            size_t capacity() const { return m_capacity; }
             //===================================================================
 
 
@@ -252,16 +256,13 @@ namespace sc {
                         return ptr + 1;
                     }
 
-                    const bool operator==( const iterator & rhs )
+                    // SELAN: adicionei const no final.
+                    bool operator==( const iterator & rhs ) const
                     { return this->ptr == rhs.ptr; }
 
-                    const bool operator!=( const iterator & rhs )
+                    // SELAN: adicionei const no final.
+                    bool operator!=( const iterator & rhs ) const
                     { return this->ptr != rhs.ptr; }
-
-
-
-
-
 
             };
 
@@ -282,10 +283,12 @@ namespace sc {
                     const_iterator( const T * pt=nullptr ) : ptr{ pt } {}
 
                     // default copy construtor ( Itr ptr2( ptr ) )
-                    const_iterator( const_iterator & ) = default;
+                    const_iterator( const const_iterator & ) = default;
 
                     // default destructor
                     ~const_iterator( void ) = default;
+
+                    const_iterator& operator=( const const_iterator& ) = default;
 
                     // operator 'pointer to'( *it = value )
                     const T& operator*( void ) const{ return *ptr; };
@@ -324,6 +327,14 @@ namespace sc {
                         return ptr - 1;
                     }
 
+                    // SELAN: Não fez == e != para esse iterator
+                    bool operator==( const const_iterator & rhs ) const
+                    { return this->ptr == rhs.ptr; }
+
+                    // SELAN: adicionei const no final.
+                    bool operator!=( const const_iterator & rhs ) const
+                    { return this->ptr != rhs.ptr; }
+
             };
 
             // begin iterator
@@ -331,8 +342,9 @@ namespace sc {
             const_iterator cbegin( void )const{ return const_iterator( &m_data[0] ); }
 
             // end iterator
-            iterator end( void ){ return iterator( &m_data[m_end] ); }
-            const_iterator cend( void ){ return const_iterator( &m_data[m_end] ); }
+            iterator end( void ) { return iterator( &m_data[m_end] ); }
+            // SELAN: faltou o const:
+            const_iterator cend( void ) const { return const_iterator( &m_data[m_end] ); }
 
             //=================================================================
             //OPERATIONS THAT REQUIRE ITERATORS
@@ -493,9 +505,18 @@ namespace sc {
 
             // SPACE MANIPULATION============================================
 
+            // SELAN: falha quanto a capacidade solicitada é menor do que a atual
+            // ao tentar fazer o backup (do maior para o menor), gera segfault.
+            // SOLUÇÃO: Só fazer resize se ncap for maior do que m_capacity.
+            //
             // reserve space in memory( allocating ).
             void reserve( size_t ncap )
             {
+                // ==============================
+                // SELAN:
+                // ==============================
+                if ( ncap < m_capacity ) return;
+                // ==============================
 
                 if( m_capacity == 0 )
                 {
@@ -592,19 +613,19 @@ namespace sc {
 
 
     };
-}
 
 // OPERATORS OVERLOADING =============================================
 
 
 template< typename T >
-
 bool operator== ( const sc::vector<T>& lhs, const sc::vector<T>& rhs )
 {
+    return ( lhs.size() == rhs.size() and
+            std::equal( lhs.cbegin(), lhs.cend(), rhs.cbegin(), std::equal_to<T>() ) );
+    /*
     if( lhs.size() != rhs.size() )
     {
         return false;
-
     }
 
     for( int i = 0; i < lhs.size(); i++ )
@@ -616,17 +637,17 @@ bool operator== ( const sc::vector<T>& lhs, const sc::vector<T>& rhs )
     }
 
     return true;
-
+    */
 }
 
 template< typename T >
-
 bool operator!= ( const sc::vector<T>& lhs, const sc::vector<T>& rhs )
 {
+    return not ( lhs == rhs );
+/*
     if( lhs.size() != rhs.size() )
     {
         return true;
-
     }
 
     for( int i = 0; i < lhs.size(); i++ )
@@ -638,6 +659,7 @@ bool operator!= ( const sc::vector<T>& lhs, const sc::vector<T>& rhs )
     }
 
     return false;
-
+    */
 }
+} // namespace sc
 #endif

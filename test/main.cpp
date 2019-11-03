@@ -424,7 +424,7 @@ TEST(IntVector, OperatorEqual)
     sc::vector<int> vec3 { 1, 2, 8, 4, 5 };
     sc::vector<int> vec4 { 8, 4, 5 };
 
-    ASSERT_EQ( vec , vec2 );
+    ASSERT_TRUE( vec == vec2 );
     ASSERT_TRUE( not ( vec == vec3 ) );
     ASSERT_TRUE( not ( vec == vec4 ) );
 }
@@ -438,8 +438,8 @@ TEST(IntVector, OperatorDifferent)
     sc::vector<int> vec4 { 8, 4, 5 };
 
     ASSERT_TRUE( not( vec != vec2 ) );
-    ASSERT_NE( vec, vec3 );
-    ASSERT_NE( vec,vec4 );
+    ASSERT_TRUE( vec != vec3 );
+    ASSERT_TRUE( vec != vec4 );
 }
 
 TEST(IntVector, InsertSingleValueAtPosition)
@@ -520,7 +520,9 @@ TEST(IntVector, AssignCountValue2)
 
         // assigning count values to sc::vector, with count < size().
         vec.assign( 3, 'x' );
-        ASSERT_EQ( vec , ( sc::vector<char>{ 'x', 'x', 'x' } ) );
+        sc::vector<char> vec2 { 'x', 'x', 'x' };
+        //ASSERT_EQ( vec , ( sc::vector<char>{ 'x', 'x', 'x' } ) );
+        ASSERT_EQ( vec , vec2 );
         ASSERT_EQ( vec.size() , 3 );
         ASSERT_EQ( vec.capacity() , 5 );
 
@@ -552,22 +554,22 @@ TEST(IntVector, EraseRange)
 
     // removing at the middle.
     vec = { 1, 2, 3, 4, 5 };
-    past_last = vec.erase( std::next(vec.begin(),1), std::next(vec.begin(),4) );
-    ASSERT_EQ( std::next(vec.begin(),1) , past_last );
+    auto pst_last = vec.erase( std::next(vec.begin(),1), std::next(vec.begin(),4) );
+    ASSERT_EQ( std::next(vec.begin(),1) , pst_last );
     ASSERT_EQ( vec , ( sc::vector<int>{ 1, 5 } ) );
     ASSERT_EQ( vec.size() , 2 );
 
     // removing a segment that reached the end.
     vec = { 1, 2, 3, 4, 5 };
-    past_last = vec.erase( std::next(vec.begin(),2), vec.end() );
-    ASSERT_EQ( vec.end() , past_last );
+    auto past_last2 = vec.erase( std::next(vec.begin(),2), vec.end() );
+    ASSERT_EQ( vec.end() , past_last2 );
     ASSERT_EQ( vec , ( sc::vector<int>{ 1, 2 } ) );
     ASSERT_EQ( vec.size() , 2 );
 
     // removing the entire vector.
     vec = { 1, 2, 3, 4, 5 };
-    past_last = vec.erase( vec.begin(), vec.end() );
-    ASSERT_EQ( vec.end() , past_last );
+    auto past_last3 = vec.erase( vec.begin(), vec.end() );
+    ASSERT_EQ( vec.end() , past_last3 );
     ASSERT_TRUE( vec.empty() );
 }
 
@@ -585,16 +587,16 @@ TEST(IntVector, ErasePos)
 
     // removing a single element in the middle.
     vec = { 1, 2, 3, 4, 5 };
-    past_last = vec.erase( std::next(vec.begin(),2) );
+    auto past_last2 = vec.erase( std::next(vec.begin(),2) );
     ASSERT_EQ( vec , ( sc::vector<int>{ 1, 2, 4, 5 } ) );
-    ASSERT_EQ( std::next(vec.begin(),2) , past_last );
+    ASSERT_EQ( std::next(vec.begin(),2) , past_last2 );
     ASSERT_EQ( vec.size() , 4 );
 
     // removing a single element at the end.
     vec = { 1, 2, 3, 4, 5 };
-    past_last = vec.erase( std::next(vec.begin(),vec.size()-1 ) );
+    auto past_last3 = vec.erase( std::next(vec.begin(),vec.size()-1 ) );
     ASSERT_EQ( vec , ( sc::vector<int>{ 1, 2, 3, 4 } ) );
-    ASSERT_EQ( vec.end() , past_last );
+    ASSERT_EQ( vec.end() , past_last3 );
     ASSERT_EQ( vec.size() , 4 );
 }
 

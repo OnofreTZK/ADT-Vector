@@ -24,8 +24,5 @@ To run google tests - developed by Professor Selan Rodrigues
 $ ./run_tests
 ```
 
-## Limitations
-`iterator insert( iterator pos, const T & value)`: In some cases the method can't insert element correctly. 
-
 ## Authorship
 Tiago Onofre Araujo

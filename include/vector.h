@@ -352,8 +352,7 @@ namespace sc {
 
             iterator insert( iterator pos, const T & value )
             {
-                //iterator first = &m_data[0];
-                iterator last = &m_data[m_end];
+                iterator runner = this->end();
 
                 m_end++;
 
@@ -362,19 +361,21 @@ namespace sc {
                     reserve( 2 * m_capacity );
                 }
 
-                while( last != pos - 1 )
+                while( runner != pos - 1)
                 {
-                    *last = *(last-1);
-                    last--;
+                    *(runner+1) = *runner;
+                    runner--;
                 }
 
-                pos--;
-
                 *pos = value;
+
+                //pos--;
+
 
                 return pos;
 
             }
+        
 
             template< typename InItr >
             iterator insert( iterator pos, InItr first, InItr last )
